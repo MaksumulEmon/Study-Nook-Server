@@ -32,6 +32,15 @@ async function run() {
         const db = client.db("studynook")
         const roomCollection = db.collection("rooms")
 
+
+        // See all the Room
+        app.get('/room', async (req, res) =>{
+            const result = await roomCollection.find().toArray()
+            res.json(result)
+
+        })
+
+        // Add Rooms
         app.post('/room', async (req, res) => {
             const roomData = req.body
             console.log(roomData)
