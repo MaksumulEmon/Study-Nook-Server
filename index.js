@@ -34,7 +34,7 @@ async function run() {
 
 
         // See all the Room
-        app.get('/room', async (req, res) =>{
+        app.get('/room', async (req, res) => {
             const result = await roomCollection.find().toArray()
             res.json(result)
 
@@ -51,12 +51,35 @@ async function run() {
 
         // Single Book Details
 
-        app.get('/room/:id', async(req,res) =>{
-            const {id} = req.params
-            const result = await roomCollection.findOne({_id: new ObjectId(id)})
-            res.json(result)
+        app.get('/room/:id', async (req, res) => {
+            const { id } = req.params
+            const result = await roomCollection.findOne({ _id: new ObjectId(id) })
+            res.json(result);
         })
 
+
+
+        // EditModal Patch
+        app.patch('/room/:id', async (req, res) => {
+            const { id } = req.params;
+            const updatedData = req.body;
+            console.log(updatedData);
+
+            const result = await roomCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: updatedData }
+            )
+
+            res.json(result);
+        })
+
+
+        // DeleteModal Room
+        app.delete('/room/:id', async(req, res) =>{
+            const {id} = req.params;
+            const result = await roomCollection.deleteOne({_id: new ObjectId(id)})
+            res.json(result);
+        })
 
 
 
