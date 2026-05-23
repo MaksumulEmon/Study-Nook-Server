@@ -75,12 +75,24 @@ async function run() {
 
 
         // DeleteModal Room
-        app.delete('/room/:id', async(req, res) =>{
-            const {id} = req.params;
-            const result = await roomCollection.deleteOne({_id: new ObjectId(id)})
+        app.delete('/room/:id', async (req, res) => {
+            const { id } = req.params;
+            const result = await roomCollection.deleteOne({ _id: new ObjectId(id) })
             res.json(result);
         })
 
+
+
+        // Featured Romm
+        app.get('/featured', async (req, res) => {
+            const result = await roomCollection
+                .find()
+                .sort({ _id: -1 })
+                .limit(4)
+                .toArray();
+
+            res.send(result);
+        });
 
 
 
