@@ -67,6 +67,18 @@ async function run() {
         })
 
 
+        // My Booking Show
+        app.get("/booking/:userId", async (req, res) => {
+            const { userId } = req.params;
+            // const bookingData = req.body;
+            const result = await bookingCollection.find({
+                userId:userId
+            }).toArray()
+            res.json(result);
+        })
+
+
+
         // EditModal Patch
         app.patch('/room/:id', async (req, res) => {
             const { id } = req.params;
