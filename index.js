@@ -31,6 +31,7 @@ async function run() {
 
         const db = client.db("studynook")
         const roomCollection = db.collection("rooms")
+        const bookingCollection = db.collection("bookings")
 
 
         // See all the Room
@@ -57,6 +58,13 @@ async function run() {
             res.json(result);
         })
 
+
+        // Booking Modal
+        app.post("/booking", async (req, res) => {
+            const bookingData = req.body;
+            const result = await bookingCollection.insertOne(bookingData)
+            res.json(result);
+        })
 
 
         // EditModal Patch
@@ -88,7 +96,7 @@ async function run() {
             const result = await roomCollection
                 .find()
                 .sort({ _id: -1 })
-                .limit(4)
+                .limit(6)
                 .toArray();
 
             res.send(result);
