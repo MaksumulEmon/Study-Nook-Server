@@ -51,8 +51,16 @@ async function run() {
 
 
         // Single Book Details
+        // Middle Ware
+        app.get('/room/:id', (req, res, next) => {
+            const header = req.headers.authorization
+            console.log(header)
+        
+            next()
 
-        app.get('/room/:id', async (req, res) => {
+
+
+        }, async (req, res) => {
             const { id } = req.params
             const result = await roomCollection.findOne({ _id: new ObjectId(id) })
             res.json(result);
