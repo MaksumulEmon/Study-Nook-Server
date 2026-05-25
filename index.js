@@ -69,11 +69,38 @@ async function run() {
 
 
         // See all the Room
-        app.get('/room', async (req, res) => {
-            const result = await roomCollection.find().toArray()
-            res.json(result)
+        // app.get('/room', async (req, res) => {
+        //     const result = await roomCollection.find().toArray()
+        //     res.json(result)
 
-        })
+        // })
+
+
+        app.get('/room', async (req, res) => {
+
+            try {
+                const { userId } = req.query;
+                let filter = {};
+                if (userId) {
+                    filter = { userId: userId };
+                }
+
+                const result = await roomCollection.find(filter).toArray();
+
+                res.send(result);
+
+            } catch (error) {
+                res.status(500).send({
+                    success: false,
+                    message: "Server error"
+                });
+            }
+        });
+
+
+
+
+
 
         // Add Rooms
         app.post('/room', async (req, res) => {
@@ -113,7 +140,7 @@ async function run() {
 
 
         // Cancel Romm Booking
-        app.delete('/booking/:bookingId',verifyToken, async (req, res) => {
+        app.delete('/booking/:bookingId', verifyToken, async (req, res) => {
             const { bookingId } = req.params;
             const result = await bookingCollection.deleteOne({ _id: new ObjectId(bookingId) })
             res.json(result);
