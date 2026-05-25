@@ -72,8 +72,17 @@ async function run() {
             const { userId } = req.params;
             // const bookingData = req.body;
             const result = await bookingCollection.find({
-                userId:userId
+                userId: userId
             }).toArray()
+            res.json(result);
+        })
+
+
+
+        // Cancel Romm Booking
+        app.delete('/booking/:bookingId', async (req, res) => {
+            const { bookingId } = req.params;
+            const result = await bookingCollection.deleteOne({ _id: new ObjectId(bookingId) })
             res.json(result);
         })
 
