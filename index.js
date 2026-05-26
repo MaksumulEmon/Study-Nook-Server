@@ -76,26 +76,84 @@ async function run() {
         // })
 
 
+        // app.get('/room', async (req, res) => {
+
+        //     try {
+        //         const { userId } = req.query;
+        //         let filter = {};
+        //         if (userId) {
+        //             filter = { userId: userId };
+        //         }
+
+        //         const result = await roomCollection.find(filter).toArray();
+
+        //         res.send(result);
+
+        //     } catch (error) {
+        //         res.status(500).send({
+        //             success: false,
+        //             message: "Server error"
+        //         });
+        //     }
+        // });
+
+
+
         app.get('/room', async (req, res) => {
 
-            try {
-                const { userId } = req.query;
-                let filter = {};
-                if (userId) {
-                    filter = { userId: userId };
+            const {
+                search,
+                amenities,
+                minPrice,
+                maxPrice,
+                floor
+            } = req.query;
+
+            let query = {};
+
+      
+            if (search) {
+                query.roomName = {
+                    $regex: `^${search}`,
+                    $options: "i"
+                };
+            }
+
+            if (amenities) {
+                const amenitiesArray = Array.isArray(amenities)
+                    ? amenities
+                    : amenities.split(",");
+
+                query.amenities = {
+                    $in: amenitiesArray
+                };
+            }
+
+
+            if (minPrice || maxPrice) {
+                query.pricePerHour = {};
+
+                if (minPrice !== undefined && minPrice !== "") {
+                    query.pricePerHour.$gte = Number(minPrice);
                 }
 
-                const result = await roomCollection.find(filter).toArray();
-
-                res.send(result);
-
-            } catch (error) {
-                res.status(500).send({
-                    success: false,
-                    message: "Server error"
-                });
+                if (maxPrice !== undefined && maxPrice !== "") {
+                    query.pricePerHour.$lte = Number(maxPrice);
+                }
             }
+
+   
+            if (floor !== undefined && floor !== "") {
+                query.floor = Number(floor);
+            }
+
+            const result = await roomCollection.find(query).toArray();
+
+            res.send(result);
         });
+
+
+
 
 
 
@@ -151,7 +209,7 @@ async function run() {
 
 
         // EditModal Patch
-        app.patch('/room/:id',verifyToken, async (req, res) => {
+        app.patch('/room/:id', verifyToken, async (req, res) => {
             const { id } = req.params;
             const updatedData = req.body;
             console.log(updatedData);
