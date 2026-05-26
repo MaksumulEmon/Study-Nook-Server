@@ -111,7 +111,7 @@ async function run() {
 
             let query = {};
 
-      
+
             if (search) {
                 query.roomName = {
                     $regex: `^${search}`,
@@ -142,7 +142,7 @@ async function run() {
                 }
             }
 
-   
+
             if (floor !== undefined && floor !== "") {
                 query.floor = Number(floor);
             }
@@ -180,11 +180,60 @@ async function run() {
 
 
         // Booking Modal
+        // app.post("/booking", verifyToken, async (req, res) => {
+        //     const bookingData = req.body;
+        //     const result = await bookingCollection.insertOne(bookingData)
+        //     res.json(result);
+        // })
+
+
+
         app.post("/booking", verifyToken, async (req, res) => {
+
             const bookingData = req.body;
-            const result = await bookingCollection.insertOne(bookingData)
-            res.json(result);
-        })
+
+            const {
+                roomId,
+                date,
+                startTime,
+                endTime
+            } = bookingData;
+
+          
+            const alreadyBooked = await bookingCollection.findOne({
+                roomId: roomId,
+                date: date,
+                startTime: startTime,
+                endTime: endTime
+            });
+
+
+            if (alreadyBooked) {
+                return res.status(400).send({
+                    success: false,
+                    message: "This room is already booked for this time slot"
+                });
+            }
+
+            const result = await bookingCollection.insertOne(bookingData);
+
+            await roomCollection.updateOne(
+                { _id: new ObjectId(roomId) },
+                {
+                    $inc: {
+                        bookingsCount: 1
+                    }
+                }
+            );
+
+            res.send({
+                success: true,
+                message: "Room booked successfully",
+                result
+            });
+        });
+
+
 
 
         // My Booking Show
