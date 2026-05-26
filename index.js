@@ -100,12 +100,14 @@ async function run() {
 
 
 
-
-
         // Add Rooms
         app.post('/room', async (req, res) => {
-            const roomData = req.body
-            console.log(roomData)
+            const roomData = {
+                ...req.body,
+                createdAt: new Date()
+            };
+            // req.body
+            // console.log(roomData)
             const result = await roomCollection.insertOne(roomData)
             res.json(result)
         })
@@ -149,7 +151,7 @@ async function run() {
 
 
         // EditModal Patch
-        app.patch('/room/:id', async (req, res) => {
+        app.patch('/room/:id',verifyToken, async (req, res) => {
             const { id } = req.params;
             const updatedData = req.body;
             console.log(updatedData);
@@ -164,7 +166,7 @@ async function run() {
 
 
         // DeleteModal Room
-        app.delete('/room/:id', async (req, res) => {
+        app.delete('/room/:id', verifyToken, async (req, res) => {
             const { id } = req.params;
             const result = await roomCollection.deleteOne({ _id: new ObjectId(id) })
             res.json(result);
