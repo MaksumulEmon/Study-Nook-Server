@@ -75,30 +75,6 @@ async function run() {
 
         // })
 
-
-        // app.get('/room', async (req, res) => {
-
-        //     try {
-        //         const { userId } = req.query;
-        //         let filter = {};
-        //         if (userId) {
-        //             filter = { userId: userId };
-        //         }
-
-        //         const result = await roomCollection.find(filter).toArray();
-
-        //         res.send(result);
-
-        //     } catch (error) {
-        //         res.status(500).send({
-        //             success: false,
-        //             message: "Server error"
-        //         });
-        //     }
-        // });
-
-
-
         app.get('/room', async (req, res) => {
 
             const {
@@ -106,10 +82,15 @@ async function run() {
                 amenities,
                 minPrice,
                 maxPrice,
-                floor
+                floor,
+                userId
             } = req.query;
 
             let query = {};
+
+            if(userId) {
+                query.userId= userId;
+            }
 
 
             if (search) {
